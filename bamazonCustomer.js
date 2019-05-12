@@ -4,19 +4,13 @@ var cTable = require('console.table');
 
 // Creates connection with MySQL
 var connection = mysql.createConnection({
+  
   host: 'localhost',
-
-  // Port
   port: 3306,
-
-  // Username
   user: 'root',
-
-  // Password
   password: 'yourRootPassword',
-
-  // Database
   database: 'bamazon'
+
 });
 
 // Creates connection and throws error if needed
@@ -57,7 +51,7 @@ function showProducts() {
   });
 }
 
-// Function to prompt user
+// Function to prompt user to buy item(s)
 function promptUser() {
     inquirer.prompt([
       {
@@ -82,7 +76,7 @@ function promptUser() {
       if (err) throw err;
 
       // Displays error if customer's request cannot be fulfilled
-      if (res[0].stock_quantity < productID) {
+    if (res[0].stock_quantity < productQTY) {
       console.log("Sorry, we don't have enough of that item to fulfill your request.")
       }
       else {
@@ -97,3 +91,4 @@ function promptUser() {
 }
 
 
+promptUser();
