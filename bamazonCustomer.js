@@ -97,7 +97,7 @@ function promptUser() {
   })
 }
 
-// Function to update the product quantity and prompt user to see if they'd like to buy mor item(s)
+// Function to update the product quantity and prompt user to see if they'd like to buy more item(s)
 function updateProduct(updatedProductQTY, productID) {
   connection.query('UPDATE products SET stock_quantity = ' + updatedProductQTY + ' WHERE id = ' + productID, function (err, res) {
 
