@@ -21,6 +21,10 @@ connection.connect(function(err) {
 
   // Displays products
   showProducts();
+
+  // Prompts User
+  promptUser();
+
   // connection.end();
 });
 
@@ -57,12 +61,12 @@ function promptUser() {
       {
         name: 'productID',
         type: 'input',
-        message: 'Enter the ID of the product you would like to purchase.\n'
+        message: '\n\nEnter the ID of the product you would like to purchase.\n\n\n\n'
       },
       {
         name: 'productQTY',
         type: 'input',
-        message: 'How many of this item would you like to purchase?\n'
+        message: '\n\nHow many of this item would you like to purchase?\n'
       }
   ])
   .then(function(answer) {
@@ -76,19 +80,56 @@ function promptUser() {
       if (err) throw err;
 
       // Displays error if customer's request cannot be fulfilled
-    if (res[0].stock_quantity < productQTY) {
-      console.log("Sorry, we don't have enough of that item to fulfill your request.")
+      if (res[0].stock_quantity < productQTY) {
+      console.log("\nSorry, we don't have enough of that item to fulfill your request.")
       }
       else {
       console.log('Your total is: $' + + (res[0].price * productQTY));
       
       // Creates variables for new product quantity
       var updatedProductQTY = res[0].stock_quantity - productQTY;
-        
+      
+      // Calls function to update the product quantity in MySQL
+      updateProduct(updatedProductQTY, productID);
+      
       }
     })
   })
 }
 
+// Function to update the product quantity and prompt user to see if they'd like to buy mor item(s)
+function updateProduct(updatedProductQTY, productID) {
+  connection.query('UPDATE products SET stock_quantity = ' + updatedProductQTY + ' WHERE id = ' + productID, function (err, res) {
 
-promptUser();
+      if(err) throw err;
+
+      // Prompts user to see if they'd like to make another purchase  
+      inquirer.prompt([
+        {
+          name: 'anotherTransaction',
+          type: 'list',
+          message: '\n\nWould you like to purchase more item(s)?\n',
+          choices: ['yes', 'no']
+        }
+      ])
+      .then(function(answer) {
+      // console.log(answer.anotherTransaction);  
+
+        // Creates variables for user's input
+        var userInput = answer.anotherTransaction;
+        
+        // Takes user through purchase flow again
+        if (userInput === 'yes') {
+          showProducts();
+          promptUser();
+        }
+        else {
+          // Ends connection and shows good-bye message
+          connection.end();
+          console.log('\n\nThanks for shopping with Bamazon!');          
+        }
+      })
+  });
+}
+
+
