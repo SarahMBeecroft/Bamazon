@@ -111,3 +111,54 @@ function viewProducts() {
   }
 })
 }
+
+
+// Function to view low inventory 
+function viewLowInventory() {
+  
+  // Query for MySQL to show stock that has less than 500 in stock
+  var query = 'Select * FROM products WHERE stock_quantity < 500';
+
+  connection.query(query, function (err, res) {
+
+    if (err) throw err;
+
+    for (var i = 0; i < res.length; i++) {
+
+      // Displays data in a table
+      console.table([
+        {
+          ID: res[i].id,
+          Product: res[i].product_name,
+          Department: res[i].department_name,
+          Price: res[i].price,
+          Stock: res[i].stock_quantity,
+        }, 
+      ]);
+    }
+  });
+  // Prompts user to go back to main menu or exit app
+  inquirer.prompt([
+    {
+      name: 'stayOrExit',
+          type: 'list',
+          message: '\n\nWhich action would you like to take?\n',
+          choices: ['Go Back to Main Menu', 'Exit']
+    }
+]).then(function(answer) {
+
+  // Creates variables for user's input
+  var managerAnswer = answer.stayOrExit;
+
+  // If statements to choose which function to run
+  if (managerAnswer === 'Go Back to Main Menu'){
+    // Calls function to prompt manager
+    promptManager();
+  }
+  else {
+    // Ends connection and shows good-bye message
+    connection.end();
+    console.log('\n\nGood-bye!');  
+  }
+})
+}
