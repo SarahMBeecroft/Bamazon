@@ -26,3 +26,6 @@ VALUES ('borderlands_three', 'video_games', 59.99, 2256),
 
 
 SELECT * FROM products;
+
+
+
